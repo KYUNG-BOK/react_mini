@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function MovieCastSection({ cast, baseUrl }) {
   return (
     <div className="relative z-10 max-w-6xl mx-auto px-6 pb-20">

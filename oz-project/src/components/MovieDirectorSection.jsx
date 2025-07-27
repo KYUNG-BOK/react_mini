@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function MovieDirectorSection({ director }) {
   if (!director) return null;
   return (
