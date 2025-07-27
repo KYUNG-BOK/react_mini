@@ -1,0 +1,24 @@
+export default function MovieCastSection({ cast, baseUrl }) {
+  return (
+    <div className="relative z-10 max-w-6xl mx-auto px-6 pb-20">
+      <h2 className="text-2xl font-bold mb-4 text-white">출연진</h2>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {cast.map((actor) => (
+          <div key={actor.cast_id} className="text-center text-white">
+            <img
+              src={
+                actor.profile_path
+                  ? `${baseUrl}${actor.profile_path}`
+                  : 'https://via.placeholder.com/150x225?text=No+Image'
+              }
+              alt={actor.name}
+              className="rounded-lg w-full h-[225px] object-cover mb-2"
+            />
+            <p className="font-semibold">{actor.name}</p>
+            <p className="text-sm text-gray-400">{actor.character}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

@@ -10,8 +10,8 @@ export default function App() {
 
   /*
   영상을 불러오는도중, adult 등록은 안되었는데 보기 민망할 정도의
-  영상이 있어서, 추가로 필터링할 단어들을 등록하였습니다. 단어조차 적는것도 별로라서
-  별도의 파일에 넣어놓고 임포트해서 사용하였습니다.
+  영상이 있어서, 추가로 필터링할 단어들을 등록하였습니다. 
+  단어조차 적는것도 별로라서 별도의 파일에 넣어놓고 임포트해서 사용하였습니다.
   */
 
   const bannedKeywords = (import.meta.env.VITE_BANNED_KEYWORDS || "")
@@ -29,15 +29,18 @@ export default function App() {
   };
 
   /*
-  필터링
-  기본기능 -> 속성이 adult인 영화만
-  추가기능 -> 블록키워드와 함께 합산하여 필터링
+    필터링
+    기본기능 -> 속성이 adult인 영화만
+    추가기능 -> 블록키워드와 함께 합산하여 필터링
   */
   const filterMovies = (movies) =>
   (movies || []).filter((movie) => {
-    const title = movie.title.toLowerCase();
+    const title = movie.title.toLowerCase();    // title을 모두 소문자로 변경, 금칙단어 검사 시 대소문자 구분없이 비교 가능하게
+    // bannerKeywords 리스트 중 하나라도 제목에 포함되면 true
     const hasBannedKeyword = bannedKeywords.some(keyword => title.includes(keyword));
+    // 특정 단어 쌍이 동시에 포함되어 있을 경우 필터링, 두 개의 단어조합도 같이 걸러냅니다. 
     const hasBannedPair = bannedPairs.some(([a, b]) => title.includes(a) && title.includes(b));
+      //movie.adult가 true면 제외, 금칙단어 / 쌍이 포함되어 제외. 모두 아닌 경우에만 반환함.
       return !movie.adult && !hasBannedKeyword && !hasBannedPair;
   });
 
