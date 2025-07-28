@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+
+// 컴포넌트 구성요소 불러오기
 import MovieBackdrop from '../components/MovieBackdrop';
 import MoviePosterSection from '../components/MoviePosterSection';
 import MovieSummarySection from '../components/MovieSummarySection';
@@ -7,51 +9,70 @@ import MovieTrailerSection from '../components/MovieTrailerSection';
 import MovieDirectorSection from '../components/MovieDirectorSection';
 import MovieCastSection from '../components/MovieCastSection';
 
+// 이미지 출력용 base URL
 const baseUrl = 'https://image.tmdb.org/t/p/original';
+
+// 환경변수에서 TMDB API 키 불러오기
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
 export default function MovieDetail() {
+  // URL 파라미터에서 영화 ID 추출
   const { id } = useParams();
+
+  // 영화 기본 정보
   const [movie, setMovie] = useState(null);
+  // 출연 배우 목록
   const [cast, setCast] = useState([]);
+  // 감독 정보
   const [director, setDirector] = useState(null);
+  // 예고편(트레일러) 영상 목록
   const [trailers, setTrailers] = useState([]);
 
+  // 컴포넌트 마운트 시 실행
   useEffect(() => {
     async function fetchData() {
       try {
+        // 영화 상세 정보 요청
         const movieRes = await fetch(
           `https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=ko-KR`
         );
         const movieData = await movieRes.json();
-        setMovie(movieData);
+        setMovie(movieData); // 상태 저장
 
+        // 출연진 & 제작진 정보 요청
         const creditsRes = await fetch(
           `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${API_KEY}&language=ko-KR`
         );
         const creditsData = await creditsRes.json();
-        setCast(creditsData.cast.slice(0, 8));
+        setCast(creditsData.cast.slice(0, 8)); // 상위 8명만 저장
+
+        // 감독 찾기
         const foundDirector = creditsData.crew.find(
           (member) => member.job === 'Director'
         );
-        setDirector(foundDirector);
+        setDirector(foundDirector); // 감독 정보 저장
 
+        // 예고편 영상 요청
         const videosRes = await fetch(
           `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${API_KEY}&language=ko-KR`
         );
         const videosData = await videosRes.json();
+
+        // 유튜브 예고편만 필터링
         const trailers = videosData.results.filter(
           (v) => v.type === 'Trailer' && v.site === 'YouTube'
         );
-        setTrailers(trailers);
+        setTrailers(trailers); // 예고편 저장
       } catch (error) {
-        console.error('데이터 불러오기 실패:', error);
+        console.error('데이터 불러오기 실패:', error); // 에러 처리
       }
     }
-    fetchData();
-    window.scrollTo(0, 0);
-  }, [id]);
 
+    fetchData();         // 데이터 요청 시작
+    window.scrollTo(0, 0); // 페이지 최상단으로 스크롤 이동
+  }, [id]); // 영화 ID가 바뀔 때마다 실행
+
+  // 영화 정보 로딩 중일 때 스켈레톤 UI 왕허접....ㅠㅠ
   if (!movie) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
@@ -62,15 +83,22 @@ export default function MovieDetail() {
 
   return (
     <div className="relative min-h-screen text-white">
+      {/* 영화 배경 이미지 섹션 */}
       <MovieBackdrop imageUrl={`${baseUrl}${movie.backdrop_path || movie.poster_path}`} />
 
+      {/* 포스터 및 영화 요약 섹션 */}
       <div className="relative z-10 max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row gap-10 items-start">
         <MoviePosterSection movie={movie} baseUrl={baseUrl} />
         <MovieSummarySection movie={movie} />
       </div>
 
+      {/* 예고편 섹션 */}
       <MovieTrailerSection trailers={trailers} />
+
+      {/* 감독 정보 섹션 */}
       <MovieDirectorSection director={director} />
+
+      {/* 출연 배우 섹션 */}
       <MovieCastSection cast={cast} baseUrl={baseUrl} />
     </div>
   );
