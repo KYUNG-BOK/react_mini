@@ -8,6 +8,7 @@ const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 export function useFetchMovies(endpoint) {
   // 상태 변수: 필터링된 영화 목록을 저장
   const [movies, setMovies] = useState([]);
+  
 
   /*
   영상을 불러오는도중, adult 등록은 안되었는데 보기 민망할 정도의

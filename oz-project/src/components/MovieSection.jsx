@@ -1,6 +1,6 @@
-import React from "react";
-import MovieCard from "./MovieCard";
-import RecommendationSlider from "./RecommendationSlider";
+import React from 'react';
+import MovieCard from './MovieCard';
+import RecommendationSlider from './RecommendationSlider';
 
 // 영화 섹션 컴포넌트: 섹션 제목, 슬라이더와 그리드로 영화 목록을 출력
 export default function MovieSection({ title, movies, slider, grid }) {
@@ -17,13 +17,17 @@ export default function MovieSection({ title, movies, slider, grid }) {
         // slider가 false인 경우, 그리드 형태로 영화 출력
         <div
           className={`grid gap-4 ${
-            grid === 'lg' ? 'grid-cols-5' : grid === 'md' ? 'grid-cols-3' : 'grid-cols-2'
+            grid === 'lg'
+              ? 'grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'
+              : grid === 'md'
+              ? 'grid-cols-1 sm:grid-cols-3 md:grid-cols-4'
+              : 'grid-cols-2 sm:grid-cols-2'
           }`}
         >
           {/* map(): 배열을 순회하며 각 요소를 변환하여 새로운 배열로 렌더링 */}
           {/* 여기서는 각 영화(movie)를 MovieCard 컴포넌트로 변환 */}
           {movies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />      // movie props는 detail페이지에서 받아옴.
+            <MovieCard key={movie.id} movie={movie} /> // movie props는 detail페이지에서 받아옴.
           ))}
         </div>
       )}

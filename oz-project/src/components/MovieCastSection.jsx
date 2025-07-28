@@ -11,7 +11,7 @@ export default function MovieCastSection({ cast, baseUrl }) {
               src={
                 actor.profile_path
                   ? `${baseUrl}${actor.profile_path}`
-                  : 'https://via.placeholder.com/150x225?text=No+Image'
+                  : 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'
               }
               alt={actor.name}
               className="rounded-lg w-full h-[225px] object-cover mb-2"
