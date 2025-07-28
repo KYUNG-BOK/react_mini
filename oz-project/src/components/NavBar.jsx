@@ -30,7 +30,6 @@ function NavBar() {
     }
   };
 
-  // 테마에 따른 배경, 텍스트 색상 클래스
   const navBgClass =
     theme === 'light' ? 'bg-white text-black' : 'bg-black text-white';
   const inputBgClass =
@@ -58,8 +57,8 @@ function NavBar() {
           </h1>
         </Link>
 
-        {/* 모바일 전용: 로그인/회원가입 버튼 */}
-        <div className="sm:hidden flex gap-2">
+        {/* 모바일 전용: 로그인/회원가입 버튼 + 토글 버튼 옆 배치 */}
+        <div className="sm:hidden flex gap-2 items-center">
           {isLoggedIn ? (
             <>
               <button
@@ -68,6 +67,7 @@ function NavBar() {
               >
                 로그아웃
               </button>
+              <ThemeToggle />
             </>
           ) : (
             <>
@@ -83,6 +83,7 @@ function NavBar() {
               >
                 로그인
               </button>
+              <ThemeToggle />
             </>
           )}
         </div>
@@ -134,8 +135,8 @@ function NavBar() {
         </div>
       </form>
 
-      {/* 데스크탑 이상에서만 보이는 로그인/회원가입 버튼 */}
-      <div className="hidden sm:flex-shrink-0 sm:flex gap-4">
+      {/* 데스크탑 이상에서만 보이는 로그인/회원가입 버튼 + 토글 버튼 */}
+      <div className="hidden sm:flex-shrink-0 sm:flex gap-4 items-center">
         {isLoggedIn ? (
           <>
             <span className="text-xl font-semibold">
@@ -147,6 +148,7 @@ function NavBar() {
             >
               로그아웃
             </button>
+            <ThemeToggle />
           </>
         ) : (
           <>
@@ -163,11 +165,9 @@ function NavBar() {
             >
               로그인
             </button>
+            <ThemeToggle />
           </>
         )}
-      </div>
-      <div className="absolute top-4 right-4 sm:relative sm:top-auto sm:right-auto sm:ml-4">
-        <ThemeToggle />
       </div>
 
       {isSignupOpen && <SignupModal onClose={() => setIsSignupOpen(false)} />}
