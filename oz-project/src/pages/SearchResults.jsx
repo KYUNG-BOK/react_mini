@@ -3,11 +3,18 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import useDebounce from '../hooks/useDebounce';
-import { parseEnvKeywords, parseEnvKeywordPairs, filterMovies } from '../utils/filterMovies';
+import {
+  parseEnvKeywords,
+  parseEnvKeywordPairs,
+  filterMovies,
+} from '../utils/filterMovies';
+import { useTheme } from '../context/ThemeContext';
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const BANNED_KEYWORDS = parseEnvKeywords(import.meta.env.VITE_BANNED_KEYWORDS);
-const BANNED_PAIRS = parseEnvKeywordPairs(import.meta.env.VITE_BANNED_KEYWORD_PAIRS);
+const BANNED_PAIRS = parseEnvKeywordPairs(
+  import.meta.env.VITE_BANNED_KEYWORD_PAIRS
+);
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -20,6 +27,7 @@ function SearchResults() {
   const debounceQuery = useDebounce(query, 500); //500ms 디바운스 적용
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (!debounceQuery) {
@@ -63,7 +71,9 @@ function SearchResults() {
               debounceQuery
             )}&language=ko-KR&include_adult=false`
           );
-          setResults(filterMovies(res.data.results, BANNED_KEYWORDS, BANNED_PAIRS));
+          setResults(
+            filterMovies(res.data.results, BANNED_KEYWORDS, BANNED_PAIRS)
+          );
         }
         setLoading(false);
       } catch (error) {
@@ -76,15 +86,20 @@ function SearchResults() {
     fetchData();
   }, [debounceQuery, type]); // 디바운스 된 검색어 / 검색 타입이 바뀔때마다 재실행하기
 
+  const bgClass =
+    theme === 'light' ? 'bg-white text-black' : 'bg-black text-white';
+  const cardBgClass = theme === 'light' ? 'bg-gray-300' : 'bg-gray-800';
+  const textGrayClass = theme === 'light' ? 'text-gray-700' : 'text-gray-400';
+
   return (
-    <div className="min-h-screen bg-black p-10 text-white">
+    <div className={`${bgClass} min-h-screen p-10`}>
       <h2 className="text-3xl mb-6">🔍 "{query}" 검색 결과</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {loading ? (
           <p>로딩 중...</p>
         ) : (
           results.map((movie) => (
-            <div key={movie.id} className="bg-gray-800 p-4 rounded-lg">
+            <div key={movie.id} className={`${cardBgClass} p-4 rounded-lg`}>
               <Link to={`/details/${movie.id}`}>
                 <img
                   src={
@@ -93,10 +108,10 @@ function SearchResults() {
                       : '/default-poster.png'
                   }
                   alt={movie.title || movie.name}
-                  className="w-full h-auto object-cover rounded"
+                  className="w-full h-[600px] object-cover rounded"
                 />
                 <h3 className="mt-2 text-xl">{movie.title || movie.name}</h3>
-                <p className="text-sm text-gray-400">
+                <p className={`text-sm ${textGrayClass}`}>
                   {/* 출시연도, 첫 방송 연도 없으면 N/A */}
                   {movie.release_date
                     ? movie.release_date.slice(0, 4)

@@ -1,13 +1,22 @@
 import React from 'react';
 import MovieCard from './MovieCard';
 import RecommendationSlider from './RecommendationSlider';
+import { useTheme } from '../context/ThemeContext';
 
 // 영화 섹션 컴포넌트: 섹션 제목, 슬라이더와 그리드로 영화 목록을 출력
+
 export default function MovieSection({ title, movies, slider, grid }) {
+  const { theme } = useTheme(); // 현재 테마 상태 (dark or light)
+  const isLight = theme === 'light';
+
   return (
-    <section className="mb-10">
+    <section
+      className={`mb-10 ${
+        isLight ? 'bg-white text-black' : 'bg-black text-white'
+      }`}
+    >
       {/* 섹션 제목 */}
-      <h2 className="text-white text-2xl mb-4">{title}</h2>
+      <h2 className="text-2xl mb-4">{title}</h2>
 
       {/* slider prop이 true이면 추천 슬라이더 형태로 출력 , App.jsx에서 불러오기*/}
       {slider ? (
@@ -15,6 +24,7 @@ export default function MovieSection({ title, movies, slider, grid }) {
         <RecommendationSlider movies={movies.slice(0, 10)} />
       ) : (
         // slider가 false인 경우, 그리드 형태로 영화 출력
+
         <div
           className={`grid gap-4 ${
             grid === 'lg'

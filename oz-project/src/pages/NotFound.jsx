@@ -1,15 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useTheme } from '../context/ThemeContext';
 
 export default function NotFound() {
+  const { theme } = useTheme();
+
+  const bgClass =
+    theme === 'light' ? 'bg-white text-black' : 'bg-black text-white';
+  const textGrayClass = theme === 'light' ? 'text-black' : 'text-gray-300';
+  const errorColorClass = theme === 'light' ? 'text-red-600' : 'text-red-600';
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 text-center">
+    <div
+      className={`${bgClass} min-h-screen flex flex-col items-center justify-center px-6 text-center`}
+    >
       <motion.h1
         initial={{ scale: 0.8, opacity: 0, rotate: -10 }}
         animate={{ scale: 1, opacity: 1, rotate: 0 }}
         transition={{ duration: 1, ease: 'easeOut' }}
-        className="text-8xl font-extrabold text-red-600 drop-shadow-lg mb-6"
+        className={`text-8xl font-extrabold drop-shadow-lg mb-6 ${errorColorClass}`}
       >
         404
       </motion.h1>
@@ -17,7 +26,7 @@ export default function NotFound() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 0.8 }}
-        className="text-2xl text-white mb-6"
+        className={`text-xl max-w-lg mx-auto mb-4 ${textGrayClass}`}
       >
         Not Found
       </motion.p>
@@ -25,7 +34,7 @@ export default function NotFound() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1, duration: 0.6 }}
-        className="text-xl max-w-lg mx-auto mb-4 text-gray-300"
+        className={`text-xl max-w-lg mx-auto mb-4 ${textGrayClass}`}
       >
         죄송합니다. 요청하신 페이지를 찾을 수 없습니다.
         <br />

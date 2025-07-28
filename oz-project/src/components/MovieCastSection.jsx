@@ -14,7 +14,8 @@ export default function MovieCastSection({ cast, baseUrl }) {
                   : 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'
               }
               alt={actor.name}
-              className="rounded-lg w-full h-[225px] object-cover mb-2"
+              // aspect : 너비에 따라 높이 자동조절됨.
+              className="rounded-lg w-full aspect-[3/4] object-cover mb-2" 
             />
             <p className="font-semibold">{actor.name}</p>
             <p className="text-sm text-gray-400">{actor.character}</p>

@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import SignupModal from './SignupModal';
 import LoginModal from './LoginModal';
 import useAuthStore from '../store/zustand';
+import ThemeToggle from './ThemeToggle';
+import { useTheme } from '../context/ThemeContext';
 
 function NavBar() {
   const navigate = useNavigate('');
@@ -12,6 +14,7 @@ function NavBar() {
   const [searchType, setSearchType] = useState('title');
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const { theme } = useTheme();
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
@@ -27,8 +30,22 @@ function NavBar() {
     }
   };
 
+  // 테마에 따른 배경, 텍스트 색상 클래스
+  const navBgClass =
+    theme === 'light' ? 'bg-white text-black' : 'bg-black text-white';
+  const inputBgClass =
+    theme === 'light' ? 'bg-gray-200 text-black' : 'bg-gray-500 text-white';
+  const selectBgClass =
+    theme === 'light' ? 'bg-gray-300 text-black' : 'bg-gray-600 text-white';
+  const buttonBgClass =
+    theme === 'light'
+      ? 'bg-gray-300 text-black hover:bg-gray-400'
+      : 'bg-gray-600 text-white hover:bg-gray-700';
+
   return (
-    <nav className="bg-black text-white px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center sm:justify-between gap-4 sm:gap-0">
+    <nav
+      className={`${navBgClass} px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center sm:justify-between gap-4 sm:gap-0`}
+    >
       {/* 로고 */}
       <div className="flex-shrink-0 flex items-center justify-between w-full sm:w-auto">
         <Link to="/">
@@ -47,7 +64,7 @@ function NavBar() {
             <>
               <button
                 onClick={logout}
-                className="px-4 py-2 text-sm rounded-md bg-gray-600 text-white hover:bg-gray-700"
+                className={`${buttonBgClass} px-4 py-2 text-sm rounded-md`}
               >
                 로그아웃
               </button>
@@ -56,13 +73,13 @@ function NavBar() {
             <>
               <button
                 onClick={() => setIsSignupOpen(true)}
-                className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md text-white text-sm font-semibold"
+                className={`${buttonBgClass} px-4 py-2 rounded-md text-sm font-semibold`}
               >
                 회원가입
               </button>
               <button
                 onClick={() => setIsLoginOpen(true)}
-                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 text-sm"
+                className={`${buttonBgClass} px-4 py-2 rounded-md text-sm`}
               >
                 로그인
               </button>
@@ -101,7 +118,7 @@ function NavBar() {
                   ? '영화명을 입력하세요.'
                   : '출연 배우를 입력하세요.'
               }
-              className="w-full pl-10 pr-4 py-2 text-base sm:text-xl rounded-md bg-gray-500 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+              className={`w-full pl-10 pr-4 py-2 text-base sm:text-xl rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${inputBgClass}`}
             />
           </div>
 
@@ -109,7 +126,7 @@ function NavBar() {
           <select
             value={searchType}
             onChange={(e) => setSearchType(e.target.value)}
-            className="py-2 sm:py-3 px-3 bg-gray-600 text-white rounded-md text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-red-500 mt-0 sm:mt-auto"
+            className={`py-2 sm:py-3 px-3 rounded-md text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-red-500 mt-0 sm:mt-auto ${selectBgClass}`}
           >
             <option value="title">영화 제목</option>
             <option value="actor">출연 배우</option>
@@ -126,7 +143,7 @@ function NavBar() {
             </span>
             <button
               onClick={logout}
-              className="px-6 py-3 text-lg rounded-md bg-gray-600 text-white hover:bg-gray-700"
+              className={`${buttonBgClass} px-6 py-3 text-lg rounded-md`}
             >
               로그아웃
             </button>
@@ -135,19 +152,22 @@ function NavBar() {
           <>
             <button
               onClick={() => setIsSignupOpen(true)}
-              className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg text-white text-[18px] font-semibold cursor-pointer"
+              className={`${buttonBgClass} bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg text-white text-[18px] font-semibold cursor-pointer`}
             >
               회원가입
             </button>
 
             <button
               onClick={() => setIsLoginOpen(true)}
-              className="px-6 py-3 text-lg rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors cursor-pointer"
+              className={`${buttonBgClass} px-6 py-3 text-lg rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors cursor-pointer`}
             >
               로그인
             </button>
           </>
         )}
+      </div>
+      <div className="absolute top-4 right-4 sm:relative sm:top-auto sm:right-auto sm:ml-4">
+        <ThemeToggle />
       </div>
 
       {isSignupOpen && <SignupModal onClose={() => setIsSignupOpen(false)} />}
