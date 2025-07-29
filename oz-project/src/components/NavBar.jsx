@@ -7,6 +7,7 @@ import SearchBar from './SearchBar';
 import UserMenu from './UserMenu';
 import LoginModal from './LoginModal';
 import SignupModal from './SignupModal';
+import useDebounce from '../hooks/useDebounce';
 
 function NavBar() {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ function NavBar() {
   const dropdownRefMobile = useRef(null);
   const userMenuRefDesktop = useRef(null);
   const dropdownRefDesktop = useRef(null);
-
+  const debounceSearch = useDebounce(search, 500);
   // 다크/라이트 모드 클래스
   const { theme } = useAuthStore();
   const navBgClass =
@@ -59,17 +60,19 @@ function NavBar() {
     fetchUserInfo();
   }, [login]);
 
-  // 검색 네비게이션
+  // 검색어 변경에 따른 네비게이션
   useEffect(() => {
-    if (search.trim() === '') return;
+    if (debounceSearch.trim() === '') return;
 
     navigate(
-      `/search?query=${encodeURIComponent(search.trim())}&type=${searchType}`,
+      `/search?query=${encodeURIComponent(
+        debounceSearch.trim()
+      )}&type=${searchType}`,
       { replace: true }
     );
 
     setSearch('');
-  }, [searchType, navigate]);
+  }, [debounceSearch, searchType, navigate]);
 
   // 외부 클릭 감지 (모바일)
   useEffect(() => {
