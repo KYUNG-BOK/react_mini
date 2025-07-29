@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-
 import {
   parseEnvKeywords,
   parseEnvKeywordPairs,
   filterMovies
 } from '../utils/filterMovies';
-
 import { useTheme } from '../context/ThemeContext';
 import SearchCard from '../components/SearchCard';
 

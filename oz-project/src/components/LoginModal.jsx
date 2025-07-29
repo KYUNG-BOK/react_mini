@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../../supabaseClient';
 import useAuthStore from '../store/zustand';
+import SocialLoginButtons from './SocialLoginButtons';
 
 export default function LoginModal({ onClose, openSignup }) {
   const login = useAuthStore((state) => state.login);
@@ -13,17 +14,16 @@ export default function LoginModal({ onClose, openSignup }) {
     e.preventDefault();
     setLoading(true);
     setErrorMsg('');
-    
 
     // 유효성 체크하기
     if (!email.trim()) {
       setLoading(false);
-      setErrorMsg("이메일을 입력해주세요.");
+      setErrorMsg('이메일을 입력해주세요.');
       return;
     }
     if (!password) {
       setLoading(false);
-      setErrorMsg("비밀번호를 입력해주세요.");
+      setErrorMsg('비밀번호를 입력해주세요.');
       return;
     }
 
@@ -35,17 +35,17 @@ export default function LoginModal({ onClose, openSignup }) {
     if (error) {
       setLoading(false);
       // 에러메세지 한글패치
-      let msg = ""; 
-        switch (error.message) {
-          case "Invalid login credentials":
-            msg = "이메일 또는 비밀번호가 올바르지 않습니다.";
-            break;
-          case "Email not confirmed":
-            msg = "이메일 인증이 완료되지 않았습니다.";
-            break;
-          default:
-            msg = `로그인 실패: ${error.message}`;
-        }
+      let msg = '';
+      switch (error.message) {
+        case 'Invalid login credentials':
+          msg = '이메일 또는 비밀번호가 올바르지 않습니다.';
+          break;
+        case 'Email not confirmed':
+          msg = '이메일 인증이 완료되지 않았습니다.';
+          break;
+        default:
+          msg = `로그인 실패: ${error.message}`;
+      }
       setErrorMsg(msg);
       return;
     }
@@ -126,16 +126,11 @@ export default function LoginModal({ onClose, openSignup }) {
             {loading ? '로그인 중...' : '로그인'}
           </button>
         </form>
-
-        <div className="mt-6">
-  <button
-    onClick={() => supabase.auth.signInWithOAuth({ provider: 'kakao' })}
-    className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg"
-  >
-    카카오로 로그인
-  </button>
-</div>
-
+        
+        {/* 소셜 로그인버튼 분리, 구글 & 카카오 */}
+        <div className="mt-3">
+          <SocialLoginButtons />
+        </div>
 
         {/* 회원가입 링크 */}
         <p className="mt-4 text-center text-gray-400 text-sm">
