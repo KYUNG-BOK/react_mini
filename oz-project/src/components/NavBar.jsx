@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { FiSearch } from 'react-icons/fi';
+import React, { useState, useEffect, useRef } from 'react';
+import { FiSearch, FiUser } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 import SignupModal from './SignupModal';
 import LoginModal from './LoginModal';
@@ -17,28 +17,80 @@ function NavBar() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const { theme } = useTheme();
 
+  // 유저 메뉴 열림 상태를 모바일, 데스크탑 따로 관리 (권장)
+  const [isUserMenuOpenMobile, setIsUserMenuOpenMobile] = useState(false);
+  const [isUserMenuOpenDesktop, setIsUserMenuOpenDesktop] = useState(false);
+
+  // ref도 각각 분리
+  const userMenuRefMobile = useRef(null);
+  const dropdownRefMobile = useRef(null);
+  const userMenuRefDesktop = useRef(null);
+  const dropdownRefDesktop = useRef(null);
+
   const debounceSearch = useDebounce(search, 500);
 
-  // 디바운스 완료 후 URL 변경하기
+  // 검색어 변경에 따른 네비게이션
   useEffect(() => {
     if (debounceSearch.trim() === '') return;
 
     navigate(
-      `/search?query=${encodeURIComponent(
-        debounceSearch.trim()
-      )}&type=${searchType}`,
-      { replace: true } // history를 누적시키지 않음
+      `/search?query=${encodeURIComponent(debounceSearch.trim())}&type=${searchType}`,
+      { replace: true }
     );
 
-    // 검색창 초기화 (엔터처럼 UX 통일)
     setSearch('');
   }, [debounceSearch, searchType, navigate]);
 
-  const handleSearchChange = (e) => {
-    setSearch(e.target.value);
-  };
+  // 모바일 메뉴 외부 클릭 감지해서 닫기
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        userMenuRefMobile.current &&
+        !userMenuRefMobile.current.contains(event.target) &&
+        dropdownRefMobile.current &&
+        !dropdownRefMobile.current.contains(event.target)
+      ) {
+        setIsUserMenuOpenMobile(false);
+      }
+    }
 
-  // 폼 제출 시 즉시 탐색(엔터, 버튼 클릭)
+    if (isUserMenuOpenMobile) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isUserMenuOpenMobile]);
+
+  // 데스크탑 메뉴 외부 클릭 감지해서 닫기
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        userMenuRefDesktop.current &&
+        !userMenuRefDesktop.current.contains(event.target) &&
+        dropdownRefDesktop.current &&
+        !dropdownRefDesktop.current.contains(event.target)
+      ) {
+        setIsUserMenuOpenDesktop(false);
+      }
+    }
+
+    if (isUserMenuOpenDesktop) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isUserMenuOpenDesktop]);
+
+  const handleSearchChange = (e) => setSearch(e.target.value);
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (search.trim()) {
@@ -49,6 +101,7 @@ function NavBar() {
     }
   };
 
+  // 다크/라이트모드 클래스
   const navBgClass =
     theme === 'light' ? 'bg-white text-black' : 'bg-black text-white';
   const inputBgClass =
@@ -64,7 +117,7 @@ function NavBar() {
     <nav
       className={`${navBgClass} px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center sm:justify-between gap-4 sm:gap-0`}
     >
-      {/* 로고 */}
+      {/* 로고 + 모바일 메뉴 영역 */}
       <div className="flex-shrink-0 flex items-center justify-between w-full sm:w-auto">
         <Link to="/">
           <h1
@@ -76,43 +129,73 @@ function NavBar() {
           </h1>
         </Link>
 
-        {/* 모바일 전용: 로그인/회원가입 버튼 + 토글 버튼 옆 배치 */}
-        <div className="sm:hidden flex gap-2 items-center">
-          {isLoggedIn ? (
-            <>
-              <button
-                onClick={logout}
-                className={`${buttonBgClass} px-4 py-2 text-sm rounded-md`}
+        {/* 모바일 로그인 상태에서 썸네일 + 테마 토글 */}
+        {isLoggedIn && (
+          <div className="sm:hidden flex items-center gap-2 relative">
+            <button
+              ref={userMenuRefMobile}
+              onClick={() => setIsUserMenuOpenMobile((prev) => !prev)}
+              className="relative flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-300 hover:bg-opacity-20 focus:outline-none"
+              aria-haspopup="true"
+              aria-expanded={isUserMenuOpenMobile}
+              aria-label="사용자 메뉴 열기"
+              type="button"
+            >
+              <FiUser size={24} />
+            </button>
+
+            {isUserMenuOpenMobile && (
+              <div
+                ref={dropdownRefMobile}
+                className="absolute right-0 top-full mt-2 w-40 bg-white text-black rounded-md shadow-lg py-2 z-50"
               >
-                로그아웃
-              </button>
-              <ThemeToggle />
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() => setIsSignupOpen(true)}
-                className={`${buttonBgClass} px-4 py-2 rounded-md text-sm font-semibold`}
-              >
-                회원가입
-              </button>
-              <button
-                onClick={() => setIsLoginOpen(true)}
-                className={`${buttonBgClass} px-4 py-2 rounded-md text-sm`}
-              >
-                로그인
-              </button>
-              <ThemeToggle />
-            </>
-          )}
-        </div>
+                <div className="px-4 py-2 border-b">{user?.name}님</div>
+                <Link
+                  to="/mypage"
+                  className="block px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                  onClick={() => setIsUserMenuOpenMobile(false)}
+                >
+                  마이 페이지
+                </Link>
+                <button
+                  onClick={() => {
+                    console.log('로그아웃 클릭 (모바일)');
+                    logout();
+                    setIsUserMenuOpenMobile(false);
+                  }}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                >
+                  로그아웃
+                </button>
+              </div>
+            )}
+
+            <ThemeToggle />
+          </div>
+        )}
+
+        {/* 모바일 비로그인 상태에서 회원가입, 로그인 버튼 + 토글 */}
+        {!isLoggedIn && (
+          <div className="sm:hidden flex gap-2 items-center">
+            <button
+              onClick={() => setIsSignupOpen(true)}
+              className={`${buttonBgClass} px-4 py-2 rounded-md text-sm font-semibold`}
+            >
+              회원가입
+            </button>
+            <button
+              onClick={() => setIsLoginOpen(true)}
+              className={`${buttonBgClass} px-4 py-2 rounded-md text-sm`}
+            >
+              로그인
+            </button>
+            <ThemeToggle />
+          </div>
+        )}
       </div>
 
       {/* 검색창 */}
-      <form
-        onSubmit={handleSearchSubmit}
-        className="w-full sm:flex-grow sm:mx-6"
-      >
+      <form onSubmit={handleSearchSubmit} className="w-full sm:flex-grow sm:mx-6">
         <div
           className="
             relative flex 
@@ -154,19 +237,48 @@ function NavBar() {
         </div>
       </form>
 
-      {/* 데스크탑 이상 로그인/회원가입 + 토글 */}
-      <div className="hidden sm:flex-shrink-0 sm:flex gap-4 items-center">
+      {/* 데스크탑 로그인 상태 + 토글 */}
+      <div className="hidden sm:flex flex-shrink-0 gap-4 items-center relative">
         {isLoggedIn ? (
           <>
-            <span className="text-xl font-semibold">
-              {user?.email}님 환영합니다
-            </span>
             <button
-              onClick={logout}
-              className={`${buttonBgClass} px-6 py-3 text-lg rounded-md`}
+              ref={userMenuRefDesktop}
+              onClick={() => setIsUserMenuOpenDesktop((prev) => !prev)}
+              className="relative flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-300 hover:bg-opacity-20 focus:outline-none"
+              aria-haspopup="true"
+              aria-expanded={isUserMenuOpenDesktop}
+              aria-label="사용자 메뉴 열기"
+              type="button"
             >
-              로그아웃
+              <FiUser size={24} />
             </button>
+
+            {isUserMenuOpenDesktop && (
+              <div
+                ref={dropdownRefDesktop}
+                className="absolute right-0 top-full mt-2 w-40 bg-white text-black rounded-md shadow-lg py-2 z-50"
+              >
+                <div className="px-4 py-2 border-b">{user?.name}님</div>
+                <Link
+                  to="/mypage"
+                  className="block px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                  onClick={() => setIsUserMenuOpenDesktop(false)}
+                >
+                  마이 페이지
+                </Link>
+                <button
+                  onClick={() => {
+                    console.log('로그아웃 클릭 (데스크탑)');
+                    logout();
+                    setIsUserMenuOpenDesktop(false);
+                  }}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                >
+                  로그아웃
+                </button>
+              </div>
+            )}
+
             <ThemeToggle />
           </>
         ) : (
@@ -188,8 +300,25 @@ function NavBar() {
         )}
       </div>
 
-      {isSignupOpen && <SignupModal onClose={() => setIsSignupOpen(false)} />}
-      {isLoginOpen && <LoginModal onClose={() => setIsLoginOpen(false)} />}
+      {/* 모달 */}
+      {isSignupOpen && (
+        <SignupModal
+          onClose={() => setIsSignupOpen(false)}
+          openLogin={() => {
+            setIsLoginOpen(true);
+            setIsSignupOpen(false);
+          }}
+        />
+      )}
+      {isLoginOpen && (
+        <LoginModal
+          onClose={() => setIsLoginOpen(false)}
+          openSignup={() => {
+            setIsSignupOpen(true);
+            setIsLoginOpen(false);
+          }}
+        />
+      )}
     </nav>
   );
 }
