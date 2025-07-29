@@ -22,7 +22,16 @@ function NavBar() {
   // 디바운스 완료 후 URL 변경하기
   useEffect(() => {
     if (debounceSearch.trim() === '') return;
-    navigate(`/search?query=${encodeURIComponent(debounceSearch.trim())}&type=${searchType}`);
+
+    navigate(
+      `/search?query=${encodeURIComponent(
+        debounceSearch.trim()
+      )}&type=${searchType}`,
+      { replace: true } // history를 누적시키지 않음
+    );
+
+    // 검색창 초기화 (엔터처럼 UX 통일)
+    setSearch('');
   }, [debounceSearch, searchType, navigate]);
 
   const handleSearchChange = (e) => {
@@ -33,19 +42,28 @@ function NavBar() {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (search.trim()) {
-      navigate(`/search?query=${encodeURIComponent(search.trim())}&type=${searchType}`);
+      navigate(
+        `/search?query=${encodeURIComponent(search.trim())}&type=${searchType}`
+      );
       setSearch('');
     }
   };
 
-  const navBgClass = theme === 'light' ? 'bg-white text-black' : 'bg-black text-white';
-  const inputBgClass = theme === 'light' ? 'bg-gray-200 text-black' : 'bg-gray-500 text-white';
-  const selectBgClass = theme === 'light' ? 'bg-gray-300 text-black' : 'bg-gray-600 text-white';
+  const navBgClass =
+    theme === 'light' ? 'bg-white text-black' : 'bg-black text-white';
+  const inputBgClass =
+    theme === 'light' ? 'bg-gray-200 text-black' : 'bg-gray-500 text-white';
+  const selectBgClass =
+    theme === 'light' ? 'bg-gray-300 text-black' : 'bg-gray-600 text-white';
   const buttonBgClass =
-    theme === 'light' ? 'bg-gray-300 text-black hover:bg-gray-400' : 'bg-gray-600 text-white hover:bg-gray-700';
+    theme === 'light'
+      ? 'bg-gray-300 text-black hover:bg-gray-400'
+      : 'bg-gray-600 text-white hover:bg-gray-700';
 
   return (
-    <nav className={`${navBgClass} px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center sm:justify-between gap-4 sm:gap-0`}>
+    <nav
+      className={`${navBgClass} px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center sm:justify-between gap-4 sm:gap-0`}
+    >
       {/* 로고 */}
       <div className="flex-shrink-0 flex items-center justify-between w-full sm:w-auto">
         <Link to="/">
@@ -62,13 +80,28 @@ function NavBar() {
         <div className="sm:hidden flex gap-2 items-center">
           {isLoggedIn ? (
             <>
-              <button onClick={logout} className={`${buttonBgClass} px-4 py-2 text-sm rounded-md`}>로그아웃</button>
+              <button
+                onClick={logout}
+                className={`${buttonBgClass} px-4 py-2 text-sm rounded-md`}
+              >
+                로그아웃
+              </button>
               <ThemeToggle />
             </>
           ) : (
             <>
-              <button onClick={() => setIsSignupOpen(true)} className={`${buttonBgClass} px-4 py-2 rounded-md text-sm font-semibold`}>회원가입</button>
-              <button onClick={() => setIsLoginOpen(true)} className={`${buttonBgClass} px-4 py-2 rounded-md text-sm`}>로그인</button>
+              <button
+                onClick={() => setIsSignupOpen(true)}
+                className={`${buttonBgClass} px-4 py-2 rounded-md text-sm font-semibold`}
+              >
+                회원가입
+              </button>
+              <button
+                onClick={() => setIsLoginOpen(true)}
+                className={`${buttonBgClass} px-4 py-2 rounded-md text-sm`}
+              >
+                로그인
+              </button>
               <ThemeToggle />
             </>
           )}
@@ -76,7 +109,10 @@ function NavBar() {
       </div>
 
       {/* 검색창 */}
-      <form onSubmit={handleSearchSubmit} className="w-full sm:flex-grow sm:mx-6">
+      <form
+        onSubmit={handleSearchSubmit}
+        className="w-full sm:flex-grow sm:mx-6"
+      >
         <div
           className="
             relative flex 
@@ -89,12 +125,19 @@ function NavBar() {
         >
           {/* 검색 입력 */}
           <div className="relative flex-grow mb-0">
-            <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <FiSearch
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+              size={20}
+            />
             <input
               type="text"
               value={search}
               onChange={handleSearchChange}
-              placeholder={searchType === 'title' ? '영화명을 입력하세요.' : '출연 배우를 입력하세요.'}
+              placeholder={
+                searchType === 'title'
+                  ? '영화명을 입력하세요.'
+                  : '출연 배우를 입력하세요.'
+              }
               className={`w-full pl-10 pr-4 py-2 text-base sm:text-xl rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${inputBgClass}`}
             />
           </div>
@@ -115,8 +158,15 @@ function NavBar() {
       <div className="hidden sm:flex-shrink-0 sm:flex gap-4 items-center">
         {isLoggedIn ? (
           <>
-            <span className="text-xl font-semibold">{user?.email}님 환영합니다</span>
-            <button onClick={logout} className={`${buttonBgClass} px-6 py-3 text-lg rounded-md`}>로그아웃</button>
+            <span className="text-xl font-semibold">
+              {user?.email}님 환영합니다
+            </span>
+            <button
+              onClick={logout}
+              className={`${buttonBgClass} px-6 py-3 text-lg rounded-md`}
+            >
+              로그아웃
+            </button>
             <ThemeToggle />
           </>
         ) : (

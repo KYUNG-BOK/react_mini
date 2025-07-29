@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 
 function SearchCard({ movie, cardBgClass, textGrayClass }) {
   return (
-    <div className={`${cardBgClass} p-4 rounded-lg`}>
-      <Link to={`/details/${movie.id}`}>
+    <Link to={`/details/${movie.id}`} className="block">
+      <div className={`${cardBgClass} p-4 rounded-lg`}>
         <img
           src={
             movie.poster_path
@@ -22,8 +22,8 @@ function SearchCard({ movie, cardBgClass, textGrayClass }) {
             ? movie.first_air_date.slice(0, 4)
             : 'N/A'}
         </p>
-      </Link>
-    </div>
+      </div>
+    </Link>
   );
 }
 

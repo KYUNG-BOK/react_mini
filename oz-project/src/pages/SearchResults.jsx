@@ -10,7 +10,6 @@ import {
 
 import { useTheme } from '../context/ThemeContext';
 import SearchCard from '../components/SearchCard';
-import useDebounce from '../hooks/useDebounce';
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const BANNED_KEYWORDS = parseEnvKeywords(import.meta.env.VITE_BANNED_KEYWORDS);
@@ -23,13 +22,12 @@ function useQuery() {
 function SearchResults() {
   const query = useQuery().get('query') || '';
   const type = useQuery().get('type') || 'title';
-  const debounceQuery = useDebounce(query, 500);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
 
   useEffect(() => {
-    if (!debounceQuery.trim()) {
+    if (!query.trim()) {
       setResults([]);
       return;
     }
@@ -41,7 +39,7 @@ function SearchResults() {
         if (type === 'actor') {
           const searchRes = await axios.get(
             `https://api.themoviedb.org/3/search/person?api_key=${API_KEY}&query=${encodeURIComponent(
-              debounceQuery
+              query
             )}&language=ko-KR`
           );
 
@@ -63,7 +61,7 @@ function SearchResults() {
         } else {
           const res = await axios.get(
             `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(
-              debounceQuery
+              query
             )}&language=ko-KR&include_adult=false`
           );
 
@@ -79,7 +77,7 @@ function SearchResults() {
     };
 
     fetchData();
-  }, [debounceQuery, type]);
+  }, [query, type]);
 
   const bgClass = theme === 'light' ? 'bg-white text-black' : 'bg-black text-white';
   const cardBgClass = theme === 'light' ? 'bg-gray-300' : 'bg-gray-800';
