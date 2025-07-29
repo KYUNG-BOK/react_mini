@@ -86,7 +86,7 @@ function SearchResults() {
   return (
     <div className={`${bgClass} min-h-screen p-10`}>
       <h2 className="text-3xl mb-6">🔍 "{query}" 검색 결과</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {loading ? (
           <p>로딩 중...</p>
         ) : (

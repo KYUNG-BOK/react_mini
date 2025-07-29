@@ -127,6 +127,16 @@ export default function LoginModal({ onClose, openSignup }) {
           </button>
         </form>
 
+        <div className="mt-6">
+  <button
+    onClick={() => supabase.auth.signInWithOAuth({ provider: 'kakao' })}
+    className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg"
+  >
+    카카오로 로그인
+  </button>
+</div>
+
+
         {/* 회원가입 링크 */}
         <p className="mt-4 text-center text-gray-400 text-sm">
           아직 회원이 아니신가요?{' '}

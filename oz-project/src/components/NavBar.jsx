@@ -7,6 +7,7 @@ import useAuthStore from '../store/zustand';
 import ThemeToggle from './ThemeToggle';
 import { useTheme } from '../context/ThemeContext';
 import useDebounce from '../hooks/useDebounce';
+import { supabase } from '../../supabaseClient'; // 카카오 연동 시작
 
 function NavBar() {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ function NavBar() {
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const { theme } = useTheme();
+  const { login } = useAuthStore(); // 유저정보 불러오기
 
   // 유저 메뉴 열림 상태를 모바일, 데스크탑 따로 관리 (권장)
   const [isUserMenuOpenMobile, setIsUserMenuOpenMobile] = useState(false);
@@ -28,13 +30,36 @@ function NavBar() {
   const dropdownRefDesktop = useRef(null);
 
   const debounceSearch = useDebounce(search, 500);
+  // 카카오 로그인정보 불러오기
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        const { user_metadata } = user;
+
+        login({
+          id: user.id,
+          name: user_metadata?.name || user_metadata?.full_name || '사용자',
+          email: user.email,
+        });
+      }
+    };
+
+    fetchUserInfo();
+  }, [login]);
 
   // 검색어 변경에 따른 네비게이션
   useEffect(() => {
     if (debounceSearch.trim() === '') return;
 
     navigate(
-      `/search?query=${encodeURIComponent(debounceSearch.trim())}&type=${searchType}`,
+      `/search?query=${encodeURIComponent(
+        debounceSearch.trim()
+      )}&type=${searchType}`,
       { replace: true }
     );
 
@@ -195,7 +220,10 @@ function NavBar() {
       </div>
 
       {/* 검색창 */}
-      <form onSubmit={handleSearchSubmit} className="w-full sm:flex-grow sm:mx-6">
+      <form
+        onSubmit={handleSearchSubmit}
+        className="w-full sm:flex-grow sm:mx-6"
+      >
         <div
           className="
             relative flex 
