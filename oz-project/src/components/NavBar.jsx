@@ -8,11 +8,11 @@ import UserMenu from './UserMenu';
 import LoginModal from './LoginModal';
 import SignupModal from './SignupModal';
 import useDebounce from '../hooks/useDebounce';
+import { useTheme } from '../context/ThemeContext';
 
 function NavBar() {
   const navigate = useNavigate();
   const { user, isLoggedIn, logout, login } = useAuthStore();
-
   const [search, setSearch] = useState('');
   const [searchType, setSearchType] = useState('title');
   const [isSignupOpen, setIsSignupOpen] = useState(false);
@@ -26,8 +26,9 @@ function NavBar() {
   const userMenuRefDesktop = useRef(null);
   const dropdownRefDesktop = useRef(null);
   const debounceSearch = useDebounce(search, 500);
+
   // 다크/라이트 모드 클래스
-  const { theme } = useAuthStore();
+  const { theme } = useTheme();     // 앗.. 헷가리다니
   const navBgClass =
     theme === 'light' ? 'bg-white text-black' : 'bg-black text-white';
   const inputBgClass =
