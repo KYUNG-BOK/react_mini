@@ -300,7 +300,7 @@ function NavBar() {
         )}
       </div>
 
-      {/* 모달 */}
+      {/* 모달 -> login 및 signup모달에 props 내려주기*/}
       {isSignupOpen && (
         <SignupModal
           onClose={() => setIsSignupOpen(false)}

@@ -34,6 +34,7 @@ export default function LoginModal({ onClose, openSignup }) {
 
     if (error) {
       setLoading(false);
+      // 에러메세지 한글패치
       let msg = ""; 
         switch (error.message) {
           case "Invalid login credentials":
@@ -62,11 +63,11 @@ export default function LoginModal({ onClose, openSignup }) {
       setErrorMsg('프로필 정보를 불러오는데 실패했습니다.');
       return;
     }
-
+    // 구조분해할당
     login({
       id: data.user.id,
       email: data.user.email,
-      name: profileData?.name || '', // 프로필에서 가져온 이름 넣기
+      name: profileData?.name || '', // 프로필 테이블에서 가져온 이름 넣기
     });
 
     onClose();
