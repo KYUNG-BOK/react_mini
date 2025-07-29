@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiSearch } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 import SignupModal from './SignupModal';
@@ -6,9 +6,10 @@ import LoginModal from './LoginModal';
 import useAuthStore from '../store/zustand';
 import ThemeToggle from './ThemeToggle';
 import { useTheme } from '../context/ThemeContext';
+import useDebounce from '../hooks/useDebounce';
 
 function NavBar() {
-  const navigate = useNavigate('');
+  const navigate = useNavigate();
   const { user, isLoggedIn, logout } = useAuthStore();
   const [search, setSearch] = useState('');
   const [searchType, setSearchType] = useState('title');
@@ -16,35 +17,35 @@ function NavBar() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const { theme } = useTheme();
 
+  const debounceSearch = useDebounce(search, 500);
+
+  // 디바운스 완료 후 URL 변경하기
+  useEffect(() => {
+    if (debounceSearch.trim() === '') return;
+    navigate(`/search?query=${encodeURIComponent(debounceSearch.trim())}&type=${searchType}`);
+  }, [debounceSearch, searchType, navigate]);
+
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
   };
 
+  // 폼 제출 시 즉시 탐색(엔터, 버튼 클릭)
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (search.trim()) {
-      navigate(
-        `/search?query=${encodeURIComponent(search.trim())}&type=${searchType}`
-      );
+      navigate(`/search?query=${encodeURIComponent(search.trim())}&type=${searchType}`);
       setSearch('');
     }
   };
 
-  const navBgClass =
-    theme === 'light' ? 'bg-white text-black' : 'bg-black text-white';
-  const inputBgClass =
-    theme === 'light' ? 'bg-gray-200 text-black' : 'bg-gray-500 text-white';
-  const selectBgClass =
-    theme === 'light' ? 'bg-gray-300 text-black' : 'bg-gray-600 text-white';
+  const navBgClass = theme === 'light' ? 'bg-white text-black' : 'bg-black text-white';
+  const inputBgClass = theme === 'light' ? 'bg-gray-200 text-black' : 'bg-gray-500 text-white';
+  const selectBgClass = theme === 'light' ? 'bg-gray-300 text-black' : 'bg-gray-600 text-white';
   const buttonBgClass =
-    theme === 'light'
-      ? 'bg-gray-300 text-black hover:bg-gray-400'
-      : 'bg-gray-600 text-white hover:bg-gray-700';
+    theme === 'light' ? 'bg-gray-300 text-black hover:bg-gray-400' : 'bg-gray-600 text-white hover:bg-gray-700';
 
   return (
-    <nav
-      className={`${navBgClass} px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center sm:justify-between gap-4 sm:gap-0`}
-    >
+    <nav className={`${navBgClass} px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center sm:justify-between gap-4 sm:gap-0`}>
       {/* 로고 */}
       <div className="flex-shrink-0 flex items-center justify-between w-full sm:w-auto">
         <Link to="/">
@@ -61,28 +62,13 @@ function NavBar() {
         <div className="sm:hidden flex gap-2 items-center">
           {isLoggedIn ? (
             <>
-              <button
-                onClick={logout}
-                className={`${buttonBgClass} px-4 py-2 text-sm rounded-md`}
-              >
-                로그아웃
-              </button>
+              <button onClick={logout} className={`${buttonBgClass} px-4 py-2 text-sm rounded-md`}>로그아웃</button>
               <ThemeToggle />
             </>
           ) : (
             <>
-              <button
-                onClick={() => setIsSignupOpen(true)}
-                className={`${buttonBgClass} px-4 py-2 rounded-md text-sm font-semibold`}
-              >
-                회원가입
-              </button>
-              <button
-                onClick={() => setIsLoginOpen(true)}
-                className={`${buttonBgClass} px-4 py-2 rounded-md text-sm`}
-              >
-                로그인
-              </button>
+              <button onClick={() => setIsSignupOpen(true)} className={`${buttonBgClass} px-4 py-2 rounded-md text-sm font-semibold`}>회원가입</button>
+              <button onClick={() => setIsLoginOpen(true)} className={`${buttonBgClass} px-4 py-2 rounded-md text-sm`}>로그인</button>
               <ThemeToggle />
             </>
           )}
@@ -90,10 +76,7 @@ function NavBar() {
       </div>
 
       {/* 검색창 */}
-      <form
-        onSubmit={handleSearchSubmit}
-        className="w-full sm:flex-grow sm:mx-6"
-      >
+      <form onSubmit={handleSearchSubmit} className="w-full sm:flex-grow sm:mx-6">
         <div
           className="
             relative flex 
@@ -106,19 +89,12 @@ function NavBar() {
         >
           {/* 검색 입력 */}
           <div className="relative flex-grow mb-0">
-            <FiSearch
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
-              size={20}
-            />
+            <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
             <input
               type="text"
               value={search}
               onChange={handleSearchChange}
-              placeholder={
-                searchType === 'title'
-                  ? '영화명을 입력하세요.'
-                  : '출연 배우를 입력하세요.'
-              }
+              placeholder={searchType === 'title' ? '영화명을 입력하세요.' : '출연 배우를 입력하세요.'}
               className={`w-full pl-10 pr-4 py-2 text-base sm:text-xl rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${inputBgClass}`}
             />
           </div>
@@ -135,19 +111,12 @@ function NavBar() {
         </div>
       </form>
 
-      {/* 데스크탑 이상에서만 보이는 로그인/회원가입 버튼 + 토글 버튼 */}
+      {/* 데스크탑 이상 로그인/회원가입 + 토글 */}
       <div className="hidden sm:flex-shrink-0 sm:flex gap-4 items-center">
         {isLoggedIn ? (
           <>
-            <span className="text-xl font-semibold">
-              {user?.email}님 환영합니다
-            </span>
-            <button
-              onClick={logout}
-              className={`${buttonBgClass} px-6 py-3 text-lg rounded-md`}
-            >
-              로그아웃
-            </button>
+            <span className="text-xl font-semibold">{user?.email}님 환영합니다</span>
+            <button onClick={logout} className={`${buttonBgClass} px-6 py-3 text-lg rounded-md`}>로그아웃</button>
             <ThemeToggle />
           </>
         ) : (
@@ -158,7 +127,6 @@ function NavBar() {
             >
               회원가입
             </button>
-
             <button
               onClick={() => setIsLoginOpen(true)}
               className={`${buttonBgClass} px-6 py-3 text-lg rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors cursor-pointer`}

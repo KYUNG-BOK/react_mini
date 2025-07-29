@@ -1,35 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import useDebounce from '../hooks/useDebounce';
+
 import {
   parseEnvKeywords,
   parseEnvKeywordPairs,
-  filterMovies,
+  filterMovies
 } from '../utils/filterMovies';
+
 import { useTheme } from '../context/ThemeContext';
-import SearchCard from '../components/SearchCard';  
+import SearchCard from '../components/SearchCard';
+import useDebounce from '../hooks/useDebounce';
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const BANNED_KEYWORDS = parseEnvKeywords(import.meta.env.VITE_BANNED_KEYWORDS);
-const BANNED_PAIRS = parseEnvKeywordPairs(
-  import.meta.env.VITE_BANNED_KEYWORD_PAIRS
-);
+const BANNED_PAIRS = parseEnvKeywordPairs(import.meta.env.VITE_BANNED_KEYWORD_PAIRS);
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
 function SearchResults() {
-  const query = useQuery().get('query');
-  const type = useQuery().get('type');
+  const query = useQuery().get('query') || '';
+  const type = useQuery().get('type') || 'title';
   const debounceQuery = useDebounce(query, 500);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
 
   useEffect(() => {
-    if (!debounceQuery) {
+    if (!debounceQuery.trim()) {
       setResults([]);
       return;
     }
@@ -44,6 +44,7 @@ function SearchResults() {
               debounceQuery
             )}&language=ko-KR`
           );
+
           const persons = searchRes.data.results || [];
 
           if (persons.length === 0) {
@@ -65,10 +66,10 @@ function SearchResults() {
               debounceQuery
             )}&language=ko-KR&include_adult=false`
           );
-          setResults(
-            filterMovies(res.data.results, BANNED_KEYWORDS, BANNED_PAIRS)
-          );
+
+          setResults(filterMovies(res.data.results, BANNED_KEYWORDS, BANNED_PAIRS));
         }
+
         setLoading(false);
       } catch (error) {
         console.error('검색 중 오류 발생:', error);
@@ -80,8 +81,7 @@ function SearchResults() {
     fetchData();
   }, [debounceQuery, type]);
 
-  const bgClass =
-    theme === 'light' ? 'bg-white text-black' : 'bg-black text-white';
+  const bgClass = theme === 'light' ? 'bg-white text-black' : 'bg-black text-white';
   const cardBgClass = theme === 'light' ? 'bg-gray-300' : 'bg-gray-800';
   const textGrayClass = theme === 'light' ? 'text-gray-700' : 'text-gray-400';
 

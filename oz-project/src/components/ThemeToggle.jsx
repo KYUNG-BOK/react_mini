@@ -1,5 +1,5 @@
 import { useTheme } from "../context/ThemeContext";
-import { FiMoon, FiSun } from "react-icons/fi";
+import { FiMoon, FiSun } from "react-icons/fi";   // 리액트 아이콘 라이브러리 사용
 
 export default function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
