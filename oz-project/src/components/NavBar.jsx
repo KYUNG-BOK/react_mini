@@ -54,6 +54,7 @@ function NavBar() {
           id: user.id,
           name: user_metadata?.name || user_metadata?.full_name || '사용자',
           email: user.email,
+          avatar_url: user_metadata?.avatar_url || user_metadata?.picture || '',  // sns 썸네일 갖고오기
         });
       }
     };

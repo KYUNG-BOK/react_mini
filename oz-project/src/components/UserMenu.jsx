@@ -28,7 +28,16 @@ export default function UserMenu({
             aria-label="사용자 메뉴 열기"
             type="button"
           >
+          {/* sns로그인 시 유저썸네일 갖고오기, NavBar컴포넌트에도 추가 */}
+          {user?.avatar_url ? (
+            <img
+              src={user.avatar_url}
+              alt="User Avatar"
+              className="w-10 h-10 rounded-full object-cover"
+            />
+          ) : (
             <FiUser size={24} />
+          )}
           </button>
 
           {isUserMenuOpenDesktop && (
