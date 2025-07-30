@@ -89,8 +89,9 @@ export default function SignupModal({ onClose, openLogin }) {
           ✕
         </button>
 
-        <h2 className="text-3xl font-bold text-center">OZFlix 회원가입</h2>
-
+        <h2 className="text-5xl font-bold text-center bg-gradient-to-r from-red-500 via-yellow-400 to-pink-500 bg-clip-text text-transparent">
+          OZFlix 회원가입
+        </h2>
         {errorMsg && (
           <div className="text-center text-red-400 text-sm mb-4">{errorMsg}</div>
         )}

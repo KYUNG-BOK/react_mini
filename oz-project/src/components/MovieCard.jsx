@@ -10,12 +10,9 @@ export default function MovieCard({ movie }) {
     : '/default-poster.png';
 
   return (
-    <Link to={`/details/${movie.id}`} className="block">
-      <div
-        className="bg-[#1c1c1e] rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:scale-105 cursor-pointer
-                    w-full
-                    sm:max-w-xs"
-      >
+    <div className="relative bg-[#1c1c1e] rounded-lg shadow-md hover:shadow-xl transition transform hover:scale-105 cursor-pointer w-full sm:max-w-xs overflow-hidden">
+      {/* 이미지 + 제목 부분만 링크 */}
+      <Link to={`/details/${movie.id}`}>
         <div className="aspect-[2/3] w-full bg-black">
           <img
             src={posterUrl}
@@ -32,7 +29,7 @@ export default function MovieCard({ movie }) {
             평점: {movie.vote_average ?? 'N/A'}
           </p>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 }

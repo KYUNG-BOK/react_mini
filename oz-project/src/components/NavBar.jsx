@@ -43,13 +43,14 @@ function NavBar() {
   // 로그인 상태 유저 정보 불러오기
   useEffect(() => {
     const fetchUserInfo = async () => {
+      // supabase에서 유저 정보 불러옴
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
       if (user) {
         const { user_metadata } = user;
-
+      // 로그인상태를 저장합니다.
         login({
           id: user.id,
           name: user_metadata?.name || user_metadata?.full_name || '사용자',
@@ -138,6 +139,12 @@ function NavBar() {
     }
   };
 
+    // 비동기 로그아웃 핸들러, 로그아웃 후 새로고침하면 유지된 현상 발견
+  const handleLogout = async () => {
+    await logout(); // supabase 세션 종료 및 상태 초기화
+    navigate('/');
+  };
+
   return (
     <nav
       className={`${navBgClass} px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center sm:justify-between gap-4 sm:gap-0`}
@@ -145,7 +152,7 @@ function NavBar() {
       <LogoSection
         isLoggedIn={isLoggedIn}
         user={user}
-        onLogout={logout}
+        onLogout={handleLogout}     // 함수 호출
         onUserMenuToggle={() => setIsUserMenuOpenMobile((prev) => !prev)}
         isUserMenuOpenMobile={isUserMenuOpenMobile}
         userMenuRefMobile={userMenuRefMobile}

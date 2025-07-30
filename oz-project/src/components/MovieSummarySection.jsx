@@ -1,6 +1,19 @@
 import React from 'react';
+import useAuthStore from '../store/zustand';
+import useFavoriteStore from '../store/favoriteStore';
 
 export default function MovieSummarySection({ movie }) {
+  const { user } = useAuthStore();
+  const { addFavorite } = useFavoriteStore();
+
+  const handleFavorite = () => {
+    if (!user) {
+      alert('로그인 후 사용하세유');
+      return;
+    }
+    addFavorite(user.id, movie);
+  };
+
   return (
     <div className="flex-1 text-white space-y-6">
       <h1 className="text-4xl font-extrabold">{movie.title}</h1>
@@ -28,7 +41,9 @@ export default function MovieSummarySection({ movie }) {
         <button className="bg-white text-black font-semibold px-5 py-2 rounded-lg hover:bg-gray-200 transition">
           ▶ 재생
         </button>
-        <button className="bg-gray-700/60 px-5 py-2 rounded-lg hover:bg-gray-600 transition">
+        <button 
+          onClick={handleFavorite}
+          className="bg-gray-700/60 px-5 py-2 rounded-lg hover:bg-gray-600 transition cursor-pointer">
           + 찜하기
         </button>
       </div>
