@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../../supabaseClient';
+import InputField from './InputField';
 
 export default function SignupModal({ onClose, openLogin }) {
   const [email, setEmail] = useState('');
@@ -58,11 +59,13 @@ export default function SignupModal({ onClose, openLogin }) {
 
     const userId = data.user?.id;
     if (userId) {
-      const { error: profileError } = await supabase.from('profiles').insert([
-        { id: userId, name },
-      ]);
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert([{ id: userId, name }]);
       if (profileError) {
-        setErrorMsg('프로필 저장 중 오류가 발생했습니다: ' + profileError.message);
+        setErrorMsg(
+          '프로필 저장 중 오류가 발생했습니다: ' + profileError.message
+        );
         setLoading(false);
         return;
       }
@@ -93,65 +96,51 @@ export default function SignupModal({ onClose, openLogin }) {
           OZFlix 회원가입
         </h2>
         {errorMsg && (
-          <div className="text-center text-red-400 text-sm mb-4">{errorMsg}</div>
+          <div className="text-center text-red-400 text-sm mb-4">
+            {errorMsg}
+          </div>
         )}
 
         {successMsg && (
-          <div className="text-center text-green-400 text-sm mb-4">{successMsg}</div>
+          <div className="text-center text-green-400 text-sm mb-4">
+            {successMsg}
+          </div>
         )}
 
         {!successMsg && (
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-            <div>
-              <label className="block text-sm mb-1">이름</label>
-              <input
-                type="text"
-                className="w-full p-3 bg-gray-800 rounded-lg outline-none"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                autoComplete="name"
-                placeholder="실명을 입력하세요"
-              />
-            </div>
-            <div>
-              <label className="block text-sm mb-1">이메일</label>
-              <input
-                type="email"
-                className="w-full p-3 bg-gray-800 rounded-lg outline-none"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoComplete="email"
-                placeholder="example@example.com"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm mb-1">비밀번호</label>
-              <input
-                type="password"
-                className="w-full p-3 bg-gray-800 rounded-lg outline-none"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                autoComplete="new-password"
-                placeholder='비밀번호를 입력해주세요.'
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm mb-1">비밀번호 확인</label>
-              <input
-                type="password"
-                className="w-full p-3 bg-gray-800 rounded-lg outline-none"
-                value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
-                required
-                autoComplete="new-password"
-                placeholder='비밀번호 확인을 위해 한번 더 입력해주세요.'
-              />
-            </div>
+            {/* 인풋요소 컴포넌트 분리 */}
+            <InputField
+              label="이름"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="실명을 입력하세요"
+              autoComplete="name"
+            />
+            <InputField
+              label="이메일"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="example@example.com"
+              autoComplete="email"
+            />
+            <InputField
+              label="비밀번호"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="비밀번호를 입력해주세요."
+              autoComplete="new-password"
+            />
+            <InputField
+              label="비밀번호 확인"
+              type="password"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              placeholder="비밀번호 확인을 위해 한번 더 입력해주세요."
+              autoComplete="new-password"
+            />
 
             <button
               type="submit"

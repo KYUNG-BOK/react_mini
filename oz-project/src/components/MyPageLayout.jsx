@@ -42,7 +42,7 @@ function MyPageLayout() {
             <img
               src={user.avatar_url}
               alt="User Avatar"
-              className="w-24 h-24 rounded-full object-cover mb-3 shadow-lg"
+              className="w-30 h-30 rounded-full object-cover mb-3 shadow-lg"
             />
           ) : (
             <div className="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mb-3">
