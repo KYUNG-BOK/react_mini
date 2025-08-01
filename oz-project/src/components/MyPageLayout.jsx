@@ -2,11 +2,14 @@ import { Outlet, NavLink } from 'react-router-dom';
 import useAuthStore from '../store/zustand'; // user정보 불러오기
 import LoginModal from './LoginModal'; // login모달
 import { useState } from 'react';
+import ProfileEditModal from './ProfileEditModal';
 
 function MyPageLayout() {
   const { user, isLoggedIn } = useAuthStore();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-// 로그인이 아닐 경우에는 로그인 필요하다는 페이지가 렌더링
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+
+  // 로그인이 아닐 경우에는 로그인 필요하다는 페이지가 렌더링
   if (!isLoggedIn) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
@@ -50,6 +53,14 @@ function MyPageLayout() {
             </div>
           )}
           <p className="font-semibold text-lg text-center">{user?.name} 님</p>
+
+            {/* 프로필 변경 버튼 */}
+  <button
+    onClick={() => setIsProfileModalOpen(true)}
+    className="mt-3 px-4 py-2 bg-red-600 rounded hover:bg-red-700 text-white font-semibold"
+  >
+    프로필 변경
+  </button>
         </div>
 
         {/* 메뉴 */}
@@ -84,6 +95,16 @@ function MyPageLayout() {
           <Outlet />
         </div>
       </main>
+
+      {isProfileModalOpen && (
+  <ProfileEditModal
+    user={user}
+    onClose={() => setIsProfileModalOpen(false)}
+    onProfileUpdated={(updatedProfile) => {
+      setIsProfileModalOpen(false);
+    }}
+  />
+)}
     </div>
   );
 }

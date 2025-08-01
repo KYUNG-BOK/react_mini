@@ -2,20 +2,21 @@ import React from 'react';
 import useAuthStore from '../store/zustand';
 import useFavoriteStore from '../store/favoriteStore';
 
-export default function MovieSummarySection({ movie }) {
+// 디테일페이지에서 제어할 수 있도록
+export default function MovieSummarySection({ movie, className = '' }) {
   const { user } = useAuthStore();
   const { addFavorite } = useFavoriteStore();
 
   const handleFavorite = () => {
     if (!user) {
-      alert('로그인 후 사용하세유');
+      alert('로그인 후 사용하세요');
       return;
     }
     addFavorite(user.id, movie);
   };
 
   return (
-    <div className="flex-1 text-white space-y-6">
+    <div className={`flex-1 text-white space-y-6 ${className}`}>
       <h1 className="text-4xl font-extrabold">{movie.title}</h1>
 
       <p className="text-yellow-400 text-lg font-semibold">

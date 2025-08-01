@@ -35,8 +35,17 @@ export default function LogoSection({
             aria-label="사용자 메뉴 열기"
             type="button"
           >
-            <FiUser size={24} />
-          </button>
+                          {user?.avatar_url ? (
+                            <img
+                              src={user.avatar_url}
+                              alt="User Avatar"
+                              className="w-10 h-10 rounded-full object-cover"
+                            />
+                          ) : (
+                            <FiUser size={24} />
+                          )}
+                        </button>
+          
 
           {isUserMenuOpenMobile && (
             <div

@@ -29,7 +29,7 @@ export async function getFavorites(userId) {
     .from('favorites')
     .select('movie_data')
     .eq('user_id', userId)
-    .order('id', {ascending: false});   // id를 기준으로 최신에 추가한게 앞으로 가도록
+    .order('id', {ascending: false});   // id를 기준으로 최신에 추가한게 앞으로 가도록, 
 
   if (error) throw error;
 

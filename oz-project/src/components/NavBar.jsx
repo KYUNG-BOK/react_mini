@@ -27,6 +27,12 @@ function NavBar() {
   const dropdownRefDesktop = useRef(null);
   const debounceSearch = useDebounce(search, 500);
 
+  const secureUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('http://')) return url.replace('http://', 'https://');
+      return url;
+  };
+
   // 다크/라이트 모드 클래스
   const { theme } = useTheme();     // 앗.. 헷가리다니
   const navBgClass =
@@ -151,7 +157,7 @@ function NavBar() {
     >
       <LogoSection
         isLoggedIn={isLoggedIn}
-        user={user}
+        user={user ? { ...user, avatar_url: secureUrl(user.avatar_url) } : null}
         onLogout={handleLogout}     // 함수 호출
         onUserMenuToggle={() => setIsUserMenuOpenMobile((prev) => !prev)}
         isUserMenuOpenMobile={isUserMenuOpenMobile}
@@ -171,7 +177,7 @@ function NavBar() {
 
       <UserMenu
         isLoggedIn={isLoggedIn}
-        user={user}
+        user={user ? { ...user, avatar_url: secureUrl(user.avatar_url) } : null}
         onLogout={logout}
         isUserMenuOpenDesktop={isUserMenuOpenDesktop}
         setIsUserMenuOpenDesktop={setIsUserMenuOpenDesktop}

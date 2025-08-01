@@ -126,11 +126,6 @@ export default function LoginModal({ onClose, openSignup }) {
             {loading ? '로그인 중...' : '로그인'}
           </button>
         </form>
-        
-        {/* 소셜 로그인버튼 분리, 구글 & 카카오 */}
-        <div className="mt-3">
-          <SocialLoginButtons />
-        </div>
 
         {/* 회원가입 링크 */}
         <p className="mt-4 text-center text-gray-400 text-sm">
@@ -146,6 +141,18 @@ export default function LoginModal({ onClose, openSignup }) {
             회원가입하기
           </button>
         </p>
+
+        {/* 구분선 */}
+        <div className="flex items-center my-6">
+          <div className="flex-grow border-t border-gray-600" />
+          <span className="mx-4 text-gray-400 text-sm">
+            또는 소셜 계정으로 로그인
+          </span>
+          <div className="flex-grow border-t border-gray-600" />
+        </div>
+
+        {/* 소셜 로그인 버튼 */}
+        <SocialLoginButtons />
       </div>
     </div>
   );

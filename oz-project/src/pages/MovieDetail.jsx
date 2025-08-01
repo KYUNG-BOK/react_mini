@@ -101,9 +101,22 @@ export default function MovieDetail() {
       />
 
       {/* 포스터 및 영화 요약 섹션 */}
-      <div className="relative z-10 max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row gap-10 items-start">
-        <MoviePosterSection movie={movie} baseUrl={baseUrl} />
-        <MovieSummarySection movie={movie} />
+      <div
+        className="
+            relative
+            max-w-6xl mx-auto px-6 py-10
+            flex flex-col md:flex-row gap-10 items-start
+            z-0 md:z-10"
+      >
+        <MoviePosterSection
+          movie={movie}
+          baseUrl={baseUrl}
+          className="hidden md:block"
+        />
+        <MovieSummarySection
+          movie={movie}
+          className="relative z-0 md:z-10 mt-[210px] md:mt-0"
+        />
       </div>
 
       {/* 예고편 섹션 */}
